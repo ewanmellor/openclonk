@@ -210,7 +210,8 @@ int32_t mouseButtonFromEvent(NSEvent* event, DWORD* modifierFlags)
 	int y = actualSizeY - mouse.y;
 
 	C4Viewport* viewport = self.controller.viewport;
-	if (::MouseControl.IsViewport(viewport) && Console.EditCursor.GetMode() == C4CNS_ModePlay)
+	if (!viewport ||
+	    (::MouseControl.IsViewport(viewport) && Console.EditCursor.GetMode() == C4CNS_ModePlay))
 	{	
 		DWORD keyMask = flags;
 		if ([event type] == NSEventTypeScrollWheel)
@@ -226,7 +227,7 @@ int32_t mouseButtonFromEvent(NSEvent* event, DWORD* modifierFlags)
 
 		::C4GUI::MouseMove(button, x, y, keyMask, Application.isEditor ? viewport : NULL);
 	}
-	else if (viewport)
+	else
 	{
 		switch (button)
 		{

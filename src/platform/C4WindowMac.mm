@@ -39,7 +39,6 @@ C4Window::C4Window ():
 
 C4Window::~C4Window () {}
 
-#ifndef WITH_QT_EDITOR
 static NSString* windowXibNameForWindowKind(C4Window::WindowKind kind)
 {
 	switch (kind)
@@ -55,17 +54,19 @@ static NSString* windowXibNameForWindowKind(C4Window::WindowKind kind)
 		return nil;
 	}
 }
-#endif
 
 C4Window * C4Window::Init(C4Window::WindowKind windowKind, C4AbstractApp * pApp, const char * Title, const C4Rect * size)
 {
 	Active = true;
     
 #ifdef WITH_QT_EDITOR
-    // embed into editor: Viewport widget creation handled by C4ConsoleQt
-    ::Console.AddViewport(static_cast<C4ViewportWindow *>(this));
-    return this;
-#else
+	if (windowKind == W_Viewport)
+	{
+		// embed into editor: Viewport widget creation handled by C4ConsoleQt
+		::Console.AddViewport(static_cast<C4ViewportWindow *>(this));
+		return this;
+	}
+#endif
 
 	// Create window
 	C4WindowController* controller = [C4WindowController new];
@@ -80,7 +81,6 @@ C4Window * C4Window::Init(C4Window::WindowKind windowKind, C4AbstractApp * pApp,
 	SetTitle(Title);
 	eKind = windowKind;
 	return this;
-#endif
 }
 
 void C4Window::Clear()
